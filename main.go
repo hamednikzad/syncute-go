@@ -2,6 +2,7 @@ package main
 
 import (
 	"syncute-go/connections"
+	"syncute-go/helpers"
 )
 
 func main() {
@@ -11,7 +12,9 @@ func main() {
 	//    "Message": "Bad requestttt"
 	//  }
 	//}`)
-	return
+
+	helpers.CheckRepository()
+
 	client := connections.Client{
 		RemoteAddress: "ws://localhost:5000/ws",
 		Token:         "y3ocz7Aiv16jRRY4yfMmqVQvuV2wPuLSOO0HbpNE",
