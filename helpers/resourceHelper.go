@@ -11,7 +11,12 @@ import (
 	"syncute-go/messages/resources"
 )
 
-var repoPath = "C:/SyncRepo/"
+var repoPath string
+
+func CheckRepo(path string) {
+	repoPath = path
+	checkPath(repoPath)
+}
 
 func exists(path string) (bool, error) {
 	_, err := os.Stat(path)
@@ -77,16 +82,33 @@ func GetAllFilesWithChecksum() []resources.Resource {
 	return result
 }
 
-func CheckRepository() {
-	ex, err := exists(repoPath)
+func checkPath(path string) {
+	path = strings.Replace(path, "\\", "/", -1)
+	ex, err := exists(path)
 	if err != nil {
 		panic(err)
 	}
 	if !ex {
-		err := os.Mkdir(repoPath, os.ModePerm)
+		err := os.Mkdir(path, os.ModePerm)
 		if err != nil {
 			log.Println(err)
 			panic(err)
 		}
 	}
+}
+
+func WriteResource(data []byte) {
+	var fileNameLen = ConvertByteArrayToInt32(data[0:4])
+
+	var skipLength = fileNameLen + 4
+	var path = string(data[4:skipLength])
+
+	var fullPath = repoPath + path
+
+	directoryOfFile := filepath.Dir(fullPath)
+	checkPath(directoryOfFile)
+
+	fmt.Printf("Writing file: %s\n", fullPath)
+
+	os.WriteFile(fullPath, data[skipLength:], os.ModePerm)
 }

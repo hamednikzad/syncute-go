@@ -30,27 +30,24 @@ func (client *Client) connect() {
 		return
 	}
 }
-func Send() {
 
-}
 func (client *Client) consume() {
 	fmt.Println("Waiting for new message...")
-	// Must be started in a go routine
+
 	for {
-		// I exit the loop upon error here so the program doesn't panic when one side closes the connection
 		messageType, message, err := client.connection.ReadMessage()
 
 		if err != nil {
 			return
 		}
-		fmt.Println("server says >>", string(message))
 
 		switch messageType {
 		case websocket.TextMessage:
-			messages.ProcessTextMessage(client.send, message)
+			fmt.Println("server: text message >>", string(message))
+			go messages.ProcessTextMessage(client.sendTextMessage, client.sendBinaryMessage, message)
 			break
 		case websocket.BinaryMessage:
-			messages.ProcessBinaryMessage(message)
+			go messages.ProcessBinaryMessage(message)
 			break
 		default:
 			fmt.Println("Unknown")
@@ -58,7 +55,12 @@ func (client *Client) consume() {
 	}
 }
 
-func (client *Client) send(message []byte) {
-	fmt.Println("sending:: ", string(message))
+func (client *Client) sendTextMessage(message []byte) {
+	fmt.Println("sending: ", string(message))
 	client.connection.WriteMessage(websocket.TextMessage, message)
+}
+
+func (client *Client) sendBinaryMessage(message []byte) {
+	fmt.Println("sending binary message: ")
+	client.connection.WriteMessage(websocket.BinaryMessage, message)
 }

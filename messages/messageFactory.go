@@ -15,3 +15,9 @@ func createGetAllResourcesJsonMessage() []byte {
 	jsonMessage, _ := json.Marshal(message)
 	return jsonMessage
 }
+
+func createDownloadResourcesJsonMessage(paths []string) []byte {
+	message := resources.CreateDownloadResourcesMessage(paths)
+	jsonMessage, _ := json.Marshal(message)
+	return jsonMessage
+}

@@ -6,14 +6,8 @@ import (
 )
 
 func main() {
-	//	rawJSON := []byte(`{
-	//  "Type": "bad_message",
-	//  "Content": {
-	//    "Message": "Bad requestttt"
-	//  }
-	//}`)
-
-	helpers.CheckRepository()
+	var repoPath = "C:/SyncRepo"
+	helpers.CheckRepo(repoPath)
 
 	client := connections.Client{
 		RemoteAddress: "ws://localhost:5000/ws",
