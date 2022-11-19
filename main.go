@@ -56,7 +56,7 @@ func main() {
 
 	client := connections.Client{
 		RemoteAddress: *remoteAddress,
-		Token:         *repoPath,
+		Token:         *token,
 	}
 	client.Start()
 }

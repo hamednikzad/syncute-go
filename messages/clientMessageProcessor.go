@@ -153,8 +153,22 @@ func sendFile(resource resources.Resource, send func(message []byte)) {
 	send(data)
 }
 
+var CurrentResources []resources.Resource
+
+func IsResourceExistAlready(fullPath string) bool {
+	for i := range CurrentResources {
+		if CurrentResources[i].FullPath == fullPath {
+			return true
+		}
+	}
+	return false
+}
+
 func ProcessBinaryMessage(binary []byte) {
 	log.Printf("Binary message with size %d received\n", len(binary))
 
-	helpers.WriteResource(binary)
+	newFilePath := helpers.WriteResource(binary)
+	newResource := helpers.GetResourceByFullPath(newFilePath, "")
+
+	CurrentResources = append(CurrentResources, newResource)
 }

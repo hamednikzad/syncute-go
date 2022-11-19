@@ -108,7 +108,7 @@ func checkPath(path string) {
 	}
 }
 
-func WriteResource(data []byte) {
+func WriteResource(data []byte) string {
 	var fileNameLen = ConvertByteArrayToInt32(data[0:4])
 
 	var skipLength = fileNameLen + 4
@@ -122,4 +122,6 @@ func WriteResource(data []byte) {
 	log.Printf("Writing file: %s\n", fullPath)
 
 	os.WriteFile(fullPath, data[skipLength:], os.ModePerm)
+
+	return fullPath
 }
