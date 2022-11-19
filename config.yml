@@ -3,4 +3,4 @@ server:
   access-token: "y3ocz7Aiv16jRRY4yfMmqVQvuV2wPuLSOO0HbpNE"
 
 client:
-  repository-path: "/home/hamed/sync"
+  repository-path: "./sync"

@@ -11,4 +11,12 @@ Run client with --help for more information.
 
 ## Test
 Use this command for unit testing:
-#### `go test ./...`
+
+`go test ./...`
+
+## Docker
+You can build docker file with this command:
+
+`docker build --tag syncute-go .`
+
+* Remember you should pass the remote server address to it.
