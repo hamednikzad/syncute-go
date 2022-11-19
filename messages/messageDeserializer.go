@@ -2,7 +2,7 @@ package messages
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"syncute-go/messages/resources"
 
 	messagesBeh "syncute-go/messages/behavioral"
@@ -25,7 +25,7 @@ func getMessageType(jsonMessage []byte) (string, error) {
 
 	mType := data["Type"]
 	if err != nil || mType == nil {
-		fmt.Println(err)
+		log.Println("Error in getMessageType", err)
 		return string(BadMessageType), err
 	}
 
@@ -36,7 +36,7 @@ func parseBadMessage(jsonMessage []byte) (messagesBeh.BadMessage, error) {
 	var message messagesBeh.BadMessage
 	err := json.Unmarshal(jsonMessage, &message)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return message, err
 	}
 	return message, nil
@@ -46,7 +46,17 @@ func parseAllResourcesListMessage(jsonMessage []byte) (resources.AllResourcesLis
 	var message resources.AllResourcesListMessage
 	err := json.Unmarshal(jsonMessage, &message)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		return message, err
+	}
+	return message, nil
+}
+
+func parseNewResourceReceivedMessage(jsonMessage []byte) (resources.NewResourceReceivedMessage, error) {
+	var message resources.NewResourceReceivedMessage
+	err := json.Unmarshal(jsonMessage, &message)
+	if err != nil {
+		log.Println(err)
 		return message, err
 	}
 	return message, nil

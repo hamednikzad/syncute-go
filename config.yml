@@ -1,0 +1,6 @@
+server:
+  remote-address: "ws://localhost:5000/ws"
+  access-token: "y3ocz7Aiv16jRRY4yfMmqVQvuV2wPuLSOO0HbpNE"
+
+client:
+  repository-path: "C:/SyncRepo"

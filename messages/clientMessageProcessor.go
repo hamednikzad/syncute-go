@@ -2,7 +2,7 @@ package messages
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"os"
 	"syncute-go/helpers"
 	"syncute-go/messages/resources"
@@ -39,13 +39,13 @@ func onBadMessage(jsonMessage []byte, send func(message []byte)) {
 	if err != nil {
 		return
 	}
-	fmt.Printf("BadMessaged received: %s\n", badMessage.Content.Message)
+	log.Printf("BadMessaged received: %s\n", badMessage.Content.Message)
 
 	send(createBadJsonMessage(badMessage))
 }
 
 func onReadyMessage(send func(message []byte)) {
-	fmt.Println("Send GetAllResources message")
+	log.Println("Send GetAllResources message")
 	var message = createGetAllResourcesJsonMessage()
 	send(message)
 }
@@ -55,9 +55,9 @@ func onAllResourcesListMessage(message []byte, sendTextMessage func(message []by
 	if err != nil {
 		return
 	}
-	fmt.Println("AllResourcesListMessage received:")
+	log.Println("AllResourcesListMessage received:")
 	for i := range allResourcesListMessage.Content.Resources {
-		fmt.Printf("Resource %d: %s\n", i, allResourcesListMessage.Content.Resources[i])
+		log.Printf("Resource %d: %s\n", i, allResourcesListMessage.Content.Resources[i])
 	}
 	var serverResources = allResourcesListMessage.Content.Resources
 
@@ -67,9 +67,9 @@ func onAllResourcesListMessage(message []byte, sendTextMessage func(message []by
 	var shouldUploads = helpers.DifferenceResources(localResources, serverResources)
 	var intersects = helpers.IntersectResources(serverResources, localResources)
 
-	fmt.Println("shouldDownloads", shouldDownloads)
-	fmt.Println("shouldUploads", shouldUploads)
-	fmt.Println("intersects", intersects)
+	//log.Println("shouldDownloads", shouldDownloads)
+	//log.Println("shouldUploads", shouldUploads)
+	//log.Println("intersects", intersects)
 
 	for i := range intersects {
 		for j := range localResources {
@@ -80,7 +80,7 @@ func onAllResourcesListMessage(message []byte, sendTextMessage func(message []by
 		}
 	}
 
-	uploadResources(shouldUploads, sendBinaryMessage)
+	UploadResources(shouldUploads, sendBinaryMessage)
 
 	downloadResources(shouldDownloads, sendTextMessage)
 }
@@ -90,7 +90,7 @@ func onNewResourceReceivedMessage(message []byte, sendTextMessage func(message [
 	if err != nil {
 		return
 	}
-	fmt.Printf("NewResourceReceivedMessage received: %s\n", newResourceReceivedMessage.Content.Resource)
+	log.Printf("NewResourceReceivedMessage received: %s\n", newResourceReceivedMessage.Content.Resource)
 
 	downloadResources([]resources.Resource{{
 		RelativePath: newResourceReceivedMessage.Content.Resource,
@@ -108,16 +108,20 @@ func getRelativePath(resources []resources.Resource) []string {
 
 func downloadResources(downloads []resources.Resource, send func(message []byte)) {
 	if len(downloads) <= 0 {
-		fmt.Println("There is nothing to download")
+		log.Println("There is nothing to download")
 		return
 	}
 
 	send(createDownloadResourcesJsonMessage(getRelativePath(downloads)))
 }
 
-func uploadResources(uploads []resources.Resource, send func(message []byte)) {
+func UploadResource(resource resources.Resource, send func(message []byte)) {
+	sendFile(resource, send)
+}
+
+func UploadResources(uploads []resources.Resource, send func(message []byte)) {
 	if len(uploads) <= 0 {
-		fmt.Println("There is nothing to upload")
+		log.Println("There is nothing to upload")
 		return
 	}
 
@@ -150,7 +154,7 @@ func sendFile(resource resources.Resource, send func(message []byte)) {
 }
 
 func ProcessBinaryMessage(binary []byte) {
-	fmt.Printf("Binary message with size %d received\n", len(binary))
+	log.Printf("Binary message with size %d received\n", len(binary))
 
 	helpers.WriteResource(binary)
 }
